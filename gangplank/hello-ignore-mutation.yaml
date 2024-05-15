@@ -17,6 +17,8 @@ spec:
       - env:
           - name: "FOO"
             value: "bar"
+          - name: "BAZ"
+            value: "quux"
         image: "gcr.io/cloudrun/hello"
     scaling:
       maxInstanceCount: 2
