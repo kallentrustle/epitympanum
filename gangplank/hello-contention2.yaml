@@ -1,0 +1,40 @@
+apiVersion: run.cnrm.cloud.google.com/v1beta1
+kind: RunService
+metadata:
+  name: hello-contention2
+  namespace: config-control
+spec:
+  ingress: "INGRESS_TRAFFIC_ALL"
+  launchStage: "GA"
+  location: "us-central1"
+  projectRef:
+    #external: projects/${PROJECT_ID?}
+    external: projects/kallengke
+  template:
+    containers:
+      - env:
+        - name: FOO
+          value: bar
+        - name: BAZ
+          value: quux
+        image: "gcr.io/cloudrun/hello"
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          cpuIdle: true
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          initialDelaySeconds: 0
+          periodSeconds: 240
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 240
+    scaling:
+      maxInstanceCount: 2
+  traffic:
+    - percent: 100
+      type: "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
